@@ -1,5 +1,5 @@
 "use client";
-import { ChangeEvent, useState } from "react";
+import { MouseEvent, useState } from "react";
 import data from "../data.json";
 
 interface Question {
@@ -20,18 +20,25 @@ function Rating({
   value: Answer["valoracion"];
   onChange: (value: number) => void;
 }) {
-  function handleRate(event: ChangeEvent<HTMLSelectElement>) {
-    onChange(Number(event.target.value) as Answer["valoracion"]);
-  }
+  const [hoverValue, setHoverValue] = useState<Answer["valoracion"]>(1);
 
   return (
-    <div className="text-2xl">
+    <div className="text-2xl" onMouseLeave={() => setHoverValue(1)}>
       {"★"
-        .repeat(value)
+        .repeat(hoverValue || value)
         .padEnd(5, "☆")
         .split("")
         .map((elem, index) => (
-          <span key={index}>{elem}</span>
+          <span
+            className="cursor-pointer"
+            onClick={() => onChange((index + 1) as Answer["valoracion"])}
+            onMouseOver={() =>
+              setHoverValue((index + 1) as Answer["valoracion"])
+            }
+            key={index}
+          >
+            {elem}
+          </span>
         ))}
     </div>
   );
