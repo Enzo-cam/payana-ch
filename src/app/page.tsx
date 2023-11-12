@@ -13,20 +13,27 @@ interface Answer extends Question {
 const questions: Question[] = data.preguntas;
 
 // Los componentes de tipo INPUT suelen recibir siempre un onChange y un value
-function Rating({value, onChange} : {value: Answer["valoracion"]; onChange:(value: number) => void}, ) {
-  
+function Rating({
+  value,
+  onChange,
+}: {
+  value: Answer["valoracion"];
+  onChange: (value: number) => void;
+}) {
   function handleRate(event: ChangeEvent<HTMLSelectElement>) {
-    onChange(Number(event.target.value) as Answer["valoracion"])
+    onChange(Number(event.target.value) as Answer["valoracion"]);
   }
 
   return (
-    <select value={value} onChange={handleRate}>
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-    </select>
+    <div className="text-2xl">
+      {"★"
+        .repeat(value)
+        .padEnd(5, "☆")
+        .split("")
+        .map((elem, index) => (
+          <span key={index}>{elem}</span>
+        ))}
+    </div>
   );
 }
 
@@ -34,11 +41,13 @@ export default function Home() {
   const [answers, setAnswers] = useState<Answer[]>([]);
   const currentQuestion = questions[answers.length];
 
-  function handleRate(rating: number){
-    setAnswers(answers => answers.concat({
-      ...currentQuestion,
-      valoracion: rating as Answer['valoracion']
-    }))
+  function handleRate(rating: number) {
+    setAnswers((answers) =>
+      answers.concat({
+        ...currentQuestion,
+        valoracion: rating as Answer["valoracion"],
+      })
+    );
   }
 
   // Mostrar las preguntas y sus valoraciones en caso de haber terminado
@@ -57,10 +66,7 @@ export default function Home() {
   return (
     <main>
       <h1>{currentQuestion.texto}</h1>
-      <Rating 
-        value={1}
-        onChange={handleRate}
-      />
+      <Rating value={1} onChange={handleRate} />
     </main>
   );
 }
