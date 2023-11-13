@@ -16,24 +16,33 @@ const questions: Question[] = data.preguntas;
 function Rating({
   value,
   onChange,
-}: {
-  value: Answer["valoracion"];
-  onChange: (value: number) => void;
-}) {
-  const [hoverValue, setHoverValue] = useState<Answer["valoracion"]>(1);
+  isReadOnly,
+}:
+  | {
+      value: Answer["valoracion"];
+      onChange: (value: number) => void;
+      isReadOnly?: never;
+    }
+  | {
+      value: Answer["valoracion"];
+      onChange?: never;
+      isReadOnly: boolean;
+    }) {
+
+  const [hoverValue, setHoverValue] = useState<Answer["valoracion"]>(value); // Inicializado con el valor actual
 
   return (
-    <div className="text-2xl" onMouseLeave={() => setHoverValue(1)}>
+    <div className="text-2xl text-yellow-500" onMouseLeave={() => setHoverValue(value)}> {/* Actualizado para resetear a value */}
       {"★"
         .repeat(hoverValue || value)
         .padEnd(5, "☆")
         .split("")
         .map((elem, index) => (
           <span
-            className="cursor-pointer"
-            onClick={() => onChange((index + 1) as Answer["valoracion"])}
+            className={!isReadOnly ? 'cursor-pointer' : ''}
+            onClick={() => !isReadOnly && onChange?.((index + 1) as Answer["valoracion"])}
             onMouseOver={() =>
-              setHoverValue((index + 1) as Answer["valoracion"])
+              !isReadOnly && setHoverValue((index + 1) as Answer["valoracion"])
             }
             key={index}
           >
@@ -60,10 +69,10 @@ export default function Home() {
   // Mostrar las preguntas y sus valoraciones en caso de haber terminado
   if (!currentQuestion) {
     return (
-      <ul>
+      <ul className="border rounded-md">
         {answers.map((answer) => (
-          <li key={answer.texto}>
-            {answer.texto} - {answer.valoracion}
+          <li className="flex items-center justify-between p-6 gap-1" key={answer.texto}>
+            {answer.texto} <Rating isReadOnly value={answer.valoracion}/>
           </li>
         ))}
       </ul>
@@ -71,9 +80,9 @@ export default function Home() {
   }
 
   return (
-    <main>
-      <h1>{currentQuestion.texto}</h1>
+    <div className="text-center">
+      <h1 className="text-xl">{currentQuestion.texto}</h1>
       <Rating value={1} onChange={handleRate} />
-    </main>
+    </div>
   );
 }

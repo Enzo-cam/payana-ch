@@ -13,7 +13,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <main className='m-auto max-w-scren-lg p-4'>
+          {children}
+        </main>
+      </body>
     </html>
   )
 }
